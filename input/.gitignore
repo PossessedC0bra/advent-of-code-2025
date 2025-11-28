@@ -1,0 +1,4 @@
+# track this .gitignore file
+!.gitignore
+# ignore everything else as input data should be kept private: https://adventofcode.com/2025/about#faq_copying
+*

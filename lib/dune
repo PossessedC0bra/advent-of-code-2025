@@ -1,0 +1,8 @@
+(library
+ (name aoc2025)
+ (libraries domainslib unix re)
+ (preprocess
+  (pps ppx_deriving.show))
+ (modules_without_implementation day))
+
+(include_subdirs qualified)
