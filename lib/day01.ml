@@ -4,28 +4,31 @@ type t2 = int [@@deriving show]
 let day = 1
 let name = "Secret Entrance"
 
-type direction =
-  | L
-  | R
-[@@deriving show]
+(* Constants *)
+let start_position = 50
+let track_length = 100
 
-let parse_direction s : direction =
-  match s with
-  | 'L' -> L
-  | 'R' -> R
-  | _ -> raise Not_found
-;;
+module Direction = struct
+  type t =
+    | L
+    | R
 
-let show_direction d =
-  match d with
-  | L -> "L"
-  | R -> "R"
-;;
+  let parse = function
+    | 'L' -> L
+    | 'R' -> R
+    | _ -> raise Not_found
+  ;;
 
-let parse_input s : (direction * int) list =
+  let show = function
+    | L -> "L"
+    | R -> "R"
+  ;;
+end
+
+let parse_input s : (Direction.t * int) list =
   let parse s =
     let length = String.length s in
-    let direction = parse_direction s.[0] in
+    let direction = Direction.parse s.[0] in
     let amount = int_of_string (String.sub s 1 (length - 1)) in
     (direction, amount)
   in
@@ -36,16 +39,16 @@ let part1 _ s =
   s
   |> parse_input
   |> List.fold_left_map
-       (fun acc (dir, num) ->
-          let x =
+       (fun old_position (dir, num) ->
+          let new_position =
             match dir with
-            | L -> acc - num
-            | R -> acc + num
+            | Direction.L -> old_position - num
+            | Direction.R -> old_position + num
           in
-          let y = (x + 100) mod 100 in
-          (y, y = 0)
+          let new_position_wrapped = (new_position + track_length) mod track_length in
+          (new_position_wrapped, new_position_wrapped = 0)
         )
-       50
+       start_position
   |> snd
   |> List.filter Fun.id
   |> List.length
@@ -55,23 +58,28 @@ let part2 _ s =
   s
   |> parse_input
   |> List.fold_left_map
-       (fun acc (dir, num) ->
-          let x =
+       (fun old_position (dir, num) ->
+          let full_rounds = num / track_length in
+          let remaining_steps = num mod track_length in
+          let new_position =
             match dir with
-            | L -> acc - num
-            | R -> acc + num
+            | Direction.L -> old_position - remaining_steps
+            | Direction.R -> old_position + remaining_steps
           in
-          let shifted_x = (x + 100) mod 100 in
-          let num_of_times_past_zero =
-            let y = abs (x / 100) in
-            match dir with
-            | L -> (if acc > 0 && (shifted_x = 0 || shifted_x > x) then 1 else 0) + y
-            | R -> y
+          let has_crossed_zero =
+            let is_past_boundary =
+              match dir with
+              | Direction.L -> new_position <= 0
+              | Direction.R -> new_position >= track_length
+            in
+            (* avoid overcounting if we STARTED on zero *)
+            old_position <> 0 && is_past_boundary
           in
-          let new_acc = (shifted_x + 100) mod 100 in
-          (new_acc, num_of_times_past_zero)
+          let times_passed_zero = full_rounds + Bool.to_int has_crossed_zero in
+          let new_position_wrapped = (new_position + track_length) mod track_length in
+          (new_position_wrapped, times_passed_zero)
         )
-       50
+       start_position
   |> snd
   |> List.fold_left ( + ) 0
 ;;
