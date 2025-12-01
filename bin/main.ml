@@ -1,4 +1,4 @@
-let days : Aoc2025.Day.t list = []
+let days : Aoc2025.Day.t list = [ (module Aoc2025.Day01) ]
 
 let () =
   let pool =
