@@ -18,6 +18,7 @@ depends: [
   "ppx_deriving"
   "re"
   "pcre"
+  "mtime"
   "alcotest" {with-test}
   "odoc" {with-doc}
 ]

@@ -28,6 +28,7 @@
   ppx_deriving
   re
   pcre
+  mtime
   (alcotest :with-test))
  (tags
   ("add topics" "to describe" your project)))
