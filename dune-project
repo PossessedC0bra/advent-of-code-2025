@@ -27,6 +27,7 @@
   domainslib
   ppx_deriving
   re
+  pcre
   (alcotest :with-test))
  (tags
   ("add topics" "to describe" your project)))

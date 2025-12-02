@@ -17,6 +17,7 @@ depends: [
   "domainslib"
   "ppx_deriving"
   "re"
+  "pcre"
   "alcotest" {with-test}
   "odoc" {with-doc}
 ]

@@ -1,6 +1,6 @@
 (library
  (name aoc2025)
- (libraries domainslib unix re)
+ (libraries domainslib unix re pcre)
  (preprocess
   (pps ppx_deriving.show))
  (modules_without_implementation day))
