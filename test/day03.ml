@@ -12,5 +12,5 @@ include Day_test.Make (struct
     let part1_testable = Alcotest.int
     let part1_test_data = [ (input, 357) ]
     let part2_testable = Alcotest.int
-    let part2_test_data = []
+    let part2_test_data = [ (input, 3_121_910_778_619) ]
   end)

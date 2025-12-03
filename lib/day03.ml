@@ -4,37 +4,49 @@ type t2 = int [@@deriving show]
 let day = 3
 let name = "Lobby"
 
-let extract_largest_number s =
-  (* Algorithm: find largest number from the left (LEFT MOST index) *)
-  let _, (largest_char_idx, largest_char_from_left) =
-    String.sub s 0 (String.length s - 1)
-    |> String.fold_left
-         (fun (idx, (largest_char_idx, largest_char)) -> function
-            | char when largest_char < char -> (idx + 1, (idx, char))
-            | _ -> (idx + 1, (largest_char_idx, largest_char))
-            )
-         (0, (0, '0'))
-  in
-  (* find the largest number from the right up until LARGEST_NUMBER_FROM_LEFT *)
-  let _, largest_char_from_right =
-    String.fold_right
-      (fun char (idx, largest_char) ->
-         if idx > largest_char_idx && largest_char < char
-         then (idx - 1, char)
-         else (idx - 1, largest_char)
-       )
-      s
-      (String.length s - 1, '0')
-  in
-  let number_of_char c = int_of_char c - int_of_char '0' in
-  (number_of_char largest_char_from_left * 10) + number_of_char largest_char_from_right
+let extract_largest_number ?(num_digits = 2) s =
+  let range ?(from = 0) until = List.init (until - from) (fun i -> from + i) in
+  let indicies = range num_digits in
+  (* Algorithm: *)
+  (* find the largest number from the left between [0 and s.len - (num_digits - idx)[ *)
+  (* in the next iteration look for the largest number between prev_idx and s.len - (num_digits - idx) *)
+  (* Complexity O(m*n) where m is num_digits and n is s.len *)
+  indicies
+  |> List.fold_left
+       (fun (prev_char_idx, res) digit_idx ->
+          let len = String.length s in
+          let chars =
+            String.sub
+              s
+              (prev_char_idx + 1)
+              (len - (num_digits - digit_idx) - prev_char_idx)
+          in
+          let digit_value c = int_of_char c - int_of_char '0' in
+          let _, largest_digit_idx, digit =
+            String.fold_left
+              (fun (idx, largest_digit_idx, largest_digit) -> function
+                 | digit when largest_digit < digit -> (idx + 1, idx, digit)
+                 | _ -> (idx + 1, largest_digit_idx, largest_digit)
+                 )
+              (0, 0, '0')
+              chars
+          in
+          (prev_char_idx + 1 + largest_digit_idx, (res * 10) + digit_value digit)
+        )
+       (-1, 0)
+  |> snd
 ;;
 
 let part1 _ s =
   s
   |> String.split_on_char '\n'
-  |> List.map extract_largest_number
+  |> List.map (extract_largest_number ~num_digits:2)
   |> List.fold_left ( + ) 0
 ;;
 
-let part2 _ _ = failwith "not yet implemented"
+let part2 _ s =
+  s
+  |> String.split_on_char '\n'
+  |> List.map (extract_largest_number ~num_digits:12)
+  |> List.fold_left ( + ) 0
+;;
