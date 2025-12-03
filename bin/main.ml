@@ -1,4 +1,6 @@
-let days : Aoc2025.Day.t list = [ (module Aoc2025.Day01); (module Aoc2025.Day02) ]
+let days : Aoc2025.Day.t list =
+  [ (module Aoc2025.Day01); (module Aoc2025.Day02); (module Aoc2025.Day03) ]
+;;
 
 (** Pretty-print duration from nanoseconds in compound format (e.g., "1m 23s 456ms")
     Below milliseconds, only one unit is shown (ms, µs, or ns) *)
