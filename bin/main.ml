@@ -1,5 +1,10 @@
 let days : Aoc2025.Day.t list =
-  [ (module Aoc2025.Day01); (module Aoc2025.Day02); (module Aoc2025.Day03) ]
+  [
+    (module Aoc2025.Day01)
+  ; (module Aoc2025.Day02)
+  ; (module Aoc2025.Day03)
+  ; (module Aoc2025.Day04)
+  ]
 ;;
 
 (** Pretty-print duration from nanoseconds in compound format (e.g., "1m 23s 456ms")
