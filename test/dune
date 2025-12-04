@@ -1,3 +1,6 @@
 (test
  (name test_advent_of_code_2025)
- (libraries aoc2025 alcotest domainslib))
+ (libraries aoc2025 alcotest domainslib)
+ (deps
+  (source_tree ../input)
+  (source_tree input)))
