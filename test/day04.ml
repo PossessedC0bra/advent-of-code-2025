@@ -24,7 +24,12 @@ include Day_test.Make (struct
     ;;
 
     let part2 : Day.t2 Day_test.part_spec =
-      { testable = Alcotest.int; examples = []; constraints = None; personal = None }
+      {
+        testable = Alcotest.int
+      ; examples = [ (example_input, 43) ]
+      ; constraints = None
+      ; personal = Some 8722
+      }
     ;;
 
     let additional_tests = None
