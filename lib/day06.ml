@@ -32,26 +32,26 @@ let parse_input s : (string list * operator) list =
     in
     (operands |> Array.to_list, op)
   in
-  let buffers, calculations =
+  let buffers, problems =
     List.init line_length Fun.id
     |> List.fold_left
-         (fun (buffers, calculations) idx ->
+         (fun (buffers, problems) idx ->
             let chars = lines |> List.map (fun line -> String.get line idx) in
             let is_spacer_row = chars |> List.for_all (( = ) ' ') in
             if is_spacer_row
-            then (buffers, flush_buffers buffers :: calculations)
+            then (buffers, flush_buffers buffers :: problems)
             else (
               chars
               |> List.iteri (fun idx c ->
                 let buf = Array.get buffers idx in
                 Buffer.add_char buf c
               );
-              (buffers, calculations)
+              (buffers, problems)
             )
           )
          (Array.init number_of_lines (fun _ -> Buffer.create 8), [])
   in
-  flush_buffers buffers :: calculations
+  flush_buffers buffers :: problems
 ;;
 
 let part1 _ s =
@@ -59,13 +59,14 @@ let part1 _ s =
   |> parse_input
   |> List.fold_left
        (fun acc (operands, op) ->
+          let calculate = function
+            | ADDITION -> List.fold_left ( + ) 0
+            | MUTLIPLICATION -> List.fold_left ( * ) 1
+          in
           let result =
             operands
             |> List.map (fun s -> s |> String.trim |> int_of_string)
-            |>
-            match op with
-            | ADDITION -> List.fold_left ( + ) 0
-            | MUTLIPLICATION -> List.fold_left ( * ) 1
+            |> calculate op
           in
           result + acc
         )
@@ -82,14 +83,8 @@ let part2 _ s =
     let rec aux acc = function
       | strings when List.for_all (fun s -> s = "") strings -> List.rev acc
       | strings ->
-        let heads =
-          List.filter_map (fun s -> if s = "" then None else Some s.[0]) strings
-        in
-        let tails =
-          List.map
-            (fun s -> if s = "" then "" else String.sub s 1 (String.length s - 1))
-            strings
-        in
+        let heads = strings |> List.map (fun s -> s.[0]) in
+        let tails = strings |> List.map (fun s -> String.sub s 1 (String.length s - 1)) in
         aux (heads :: acc) tails
     in
     aux [] strings
@@ -99,13 +94,14 @@ let part2 _ s =
   |> List.map (fun (operands, op) -> (transpose operands |> List.map string_of_chars, op))
   |> List.fold_left
        (fun acc (operands, op) ->
+          let calculate = function
+            | ADDITION -> List.fold_left ( + ) 0
+            | MUTLIPLICATION -> List.fold_left ( * ) 1
+          in
           let result =
             operands
             |> List.map (fun s -> s |> String.trim |> int_of_string)
-            |>
-            match op with
-            | ADDITION -> List.fold_left ( + ) 0
-            | MUTLIPLICATION -> List.fold_left ( * ) 1
+            |> calculate op
           in
           result + acc
         )
