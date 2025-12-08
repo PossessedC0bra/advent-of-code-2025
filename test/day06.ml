@@ -1,8 +1,14 @@
+(*
+   123 328  51 64
+   45 64  387 23
+   6 98  215 314
+   *   +   *   +
+*)
 let example_input =
   {|123 328  51 64 
  45 64  387 23 
   6 98  215 314
-*   +   *   + |}
+*   +   *   +  |}
 ;;
 
 include Day_test.Make (struct
@@ -18,7 +24,12 @@ include Day_test.Make (struct
     ;;
 
     let part2 : Day.t2 Day_test.part_spec =
-      { testable = Alcotest.int; examples = []; constraints = None; personal = None }
+      {
+        testable = Alcotest.int
+      ; examples = [ (example_input, 3_263_827) ]
+      ; constraints = None
+      ; personal = Some 8_843_673_199_391
+      }
     ;;
 
     let additional_tests = None
