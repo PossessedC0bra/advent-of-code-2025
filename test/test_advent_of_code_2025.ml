@@ -6,6 +6,7 @@ let day_tests : (module Day_test.S) list =
   ; (module Day04)
   ; (module Day05)
   ; (module Day06)
+  ; (module Day07)
   ]
 ;;
 
