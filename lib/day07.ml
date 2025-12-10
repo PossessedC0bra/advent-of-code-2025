@@ -104,4 +104,67 @@ let part1 _ s =
   | None -> 0
 ;;
 
-let part2 _ _ = failwith "not yet implemented"
+let part2 _ s =
+  let start, splitters = s |> parse_input in
+  let splitters_by_y =
+    CoordinateSet.fold
+      (fun (x, y) acc ->
+         IntMap.update
+           y
+           (function
+             | None -> Some ((x, y) :: [])
+             | Some s -> Some ((x, y) :: s)
+             )
+           acc
+       )
+      splitters
+      IntMap.empty
+  in
+  let max_y = IntMap.fold (fun y _ acc -> max y acc) splitters_by_y 0 in
+  start
+  |> Option.map (fun (start_x, start_y) ->
+    let rec trace_rays y active_rays =
+      if y > max_y || IntMap.is_empty active_rays
+      then IntMap.fold (fun _ count acc -> acc + count) active_rays 0
+      else (
+        match IntMap.find_opt y splitters_by_y with
+        | None -> trace_rays (y + 1) active_rays
+        | Some splitters_at_y ->
+          let hits =
+            List.filter (fun (sx, _) -> IntMap.mem sx active_rays) splitters_at_y
+          in
+          if List.is_empty hits
+          then trace_rays (y + 1) active_rays
+          else (
+            let active_rays' =
+              List.fold_left
+                (fun acc (x, _) ->
+                   (* remember number of paths that existed until current splitter *)
+                   let count = IntMap.find x active_rays in
+                   acc
+                   (* remove current ray *)
+                   |> IntMap.remove x
+                   (* split into left and right ray (summing up with any existing number of rays) *)
+                   |> IntMap.update (x - 1) (function
+                     | None -> Some count
+                     | Some c -> Some (c + count)
+                     )
+                   |> IntMap.update (x + 1) (function
+                     | None -> Some count
+                     | Some c -> Some (c + count)
+                     )
+                 )
+                active_rays
+                hits
+            in
+            trace_rays (y + 1) active_rays'
+          )
+      )
+    in
+    let initial_rays = IntMap.singleton start_x 1 in
+    trace_rays (start_y + 1) initial_rays
+  )
+  |> function
+  | Some x -> x
+  | None -> 0
+;;
