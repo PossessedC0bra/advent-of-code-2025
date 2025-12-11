@@ -150,4 +150,37 @@ let part1' number_of_connections _ s =
 ;;
 
 let part1 p s = part1' 1_000 p s
-let part2 _ _ = failwith "not yet implemented"
+
+let part2 _ s =
+  let find_minimal_spanning_tree ps =
+    let sets = DisjointSet.init ps in
+    let all_connections =
+      ps
+      |> List.concat_map (fun p1 ->
+        ps
+        |> List.filter_map (fun p2 ->
+          if p1 < p2 then Some (p1, p2, Vec3d.euclidian_distance p1 p2) else None
+        )
+      )
+    in
+    let connections_needed = List.length ps - 1 in
+    all_connections
+    |> List.sort (fun (_, _, d1) (_, _, d2) -> Stdlib.compare d1 d2)
+    |> List.fold_left
+         (fun ((count, _) as acc) ((p1, p2, _) as conn) ->
+            if count = connections_needed
+            then acc
+            else if DisjointSet.union sets p1 p2
+            then (count + 1, Some conn)
+            else acc
+          )
+         (0, None)
+    |> snd
+  in
+  s
+  |> parse_input
+  |> find_minimal_spanning_tree
+  |> function
+  | Some ((x1, _, _), (x2, _, _), _) -> x1 * x2
+  | None -> failwith "failed to determine MST"
+;;
