@@ -6,8 +6,9 @@ let days : Aoc2025.Day.t list =
   ; (module Aoc2025.Day04)
   ; (module Aoc2025.Day05)
   ; (module Aoc2025.Day06)
-  ; (module Aoc2025.Day07);
-  (module Aoc2025.Day08)
+  ; (module Aoc2025.Day07)
+  ; (module Aoc2025.Day08)
+  ; (module Aoc2025.Day09)
   ]
 ;;
 
