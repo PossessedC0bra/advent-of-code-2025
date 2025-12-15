@@ -11,6 +11,22 @@ hhh: ccc fff iii
 iii: out|}
 ;;
 
+let example_input_2 =
+  {|svr: aaa bbb
+aaa: fft
+fft: ccc
+bbb: tty
+tty: ccc
+ccc: ddd eee
+ddd: hub
+hub: fff
+eee: dac
+dac: fff
+fff: ggg hhh
+ggg: out
+hhh: out|}
+;;
+
 include Day_test.Make (struct
     module Day = Aoc2025.Day11
 
@@ -24,7 +40,12 @@ include Day_test.Make (struct
     ;;
 
     let part2 : Day.t2 Day_test.part_spec =
-      { testable = Alcotest.int; examples = []; constraints = None; personal = None }
+      {
+        testable = Alcotest.int
+      ; examples = [ (example_input_2, 2) ]
+      ; constraints = None
+      ; personal = Some 545_394_698_933_400
+      }
     ;;
 
     let additional_tests = None
